@@ -25,7 +25,7 @@ pyFBI.stop()
 pyFBI.show()
 ```
 
-only "watched" function is profiled.
+only "watched" function (`func1` & `func3`) is profiled.
 
 ```
          4 function calls in 0.000 seconds
