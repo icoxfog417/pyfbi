@@ -98,4 +98,6 @@ ENV/
 /site
 
 # mypy
+.vscode
 .mypy_cache/
+stat_dir

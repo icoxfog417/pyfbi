@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ static_url('css/index.css') }}" type="text/css"/>
+<script src="//cdnjs.cloudflare.com/ajax/libs/vue/2.4.4/vue.min.js" type="text/javascript"></script>
+<script src="{{ static_url('js/reconnecting-websocket.min.js') }}" type="text/javascript"></script>
+<link rel="stylesheet" type="text/css" href="{{ static_url('css/datatables.min.css') }}"/>
+<script
+    src="https://code.jquery.com/jquery-3.2.1.min.js"
+    integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+    crossorigin="anonymous">
+</script>
+<script type="text/javascript" src="{{ static_url('js/datatables.min.js') }}"></script>
+<script type="text/javascript" src="{{ static_url('js/palette.js') }}"></script>
+<script type="text/javascript" src="{{ static_url('js/Chart.min.js') }}"></script>
+{% end %}
+
+{% block bottom %}
+<script>
+    var STATS = {% raw stats %};
+</script>
+<script type="text/javascript" src="{{ static_url('js/index.js') }}"></script>
+{% end %}
+
+{% block body %}
+<div class="container">
+    <div class="columns">
+        <div class="column">
+            <canvas id="statChart"></canvas>
+        </div>
+        <div class="column">
+            <table id="stat_table" class="display" width="100%"></table>
+        </div>    
+    </div>
+</div>
+{% end %}
