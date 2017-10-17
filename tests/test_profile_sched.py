@@ -32,10 +32,10 @@ if __name__ == "__main__":
     pyFBI.stop()
 
     files = os.listdir(profile_dir)
-    assert len(files) == 2, "10 sec creates 2 file"
     for f in files:
         stats = pstats.Stats(os.path.join(profile_dir, f))
         print(f)
         stats.print_stats()
 
+    assert len(files) == 2, "10 sec creates 2 file"
     shutil.rmtree(profile_dir)
