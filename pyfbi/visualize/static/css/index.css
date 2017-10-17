@@ -1,5 +1,11 @@
+.area{
+    margin: 0px 10px 0px 10px;
+}
 .fileFilter{
     margin-right: 10px;
     padding-right: 2px;
     padding-left: 3px;    
 }
+
+th { font-size: 12px; }
+td { font-size: 10px; }

@@ -23,14 +23,21 @@
 {% end %}
 
 {% block body %}
-<div class="container">
-    <div class="columns">
-        <div class="column">
-            <canvas id="statChart"></canvas>
-        </div>
-        <div class="column">
-            <table id="stat_table" class="display" width="100%"></table>
-        </div>    
+
+<div class="area">
+    <div>
+        <canvas id="statChart"></canvas>
     </div>
+    <div>
+        <table id="stat_table" class="display" width="100%"></table>
+        <br/>
+        <ul>
+            <li>cnt: called count</li>
+            <li>self: execution time (exclude inner called function)</li>
+            <li>all: total execution time (include called function)</li>
+            <li>/call: divided by called count</li>
+        </ul>
+    </div>
+    <br/>
 </div>
 {% end %}

@@ -19,10 +19,20 @@ def func2(a, b):
     return a + b
 
 
+class SampleClass():
+
+    @watch
+    def show(self, seconds):
+        time.sleep(seconds)
+        return None
+
+
 if __name__ == "__main__":
     print("Profile to stream  *******************")
+    s = SampleClass()
     pyFBI.start()
     func(1, 2)
+    s.show(1)
     pyFBI.stop()
     func(1, 2)  # not recorded
     pyFBI.show()

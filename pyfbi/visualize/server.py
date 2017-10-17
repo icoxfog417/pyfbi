@@ -12,6 +12,8 @@ class IndexHandler(tornado.web.RequestHandler):
     def get(self):
         stats = {}
         for f in os.listdir(self.stat_dir):
+            if f.startswith("."):
+                continue
             path = os.path.join(self.stat_dir, f)
             ss = FBIStat.read_stats(path)
             stats[f] = [s.to_dict() for s in ss]

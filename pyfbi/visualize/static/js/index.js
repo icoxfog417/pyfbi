@@ -15,13 +15,13 @@ var TABLE = (function(stats){
     var table = $("#stat_table").DataTable({
         data: dataSet,
         columns: [
-            { title: "ncalls", data: "ncalls" },
-            { title: "tottime", data: "tottime", render: $.fn.dataTable.render.number(",", ".", 3)},
-            { title: "percall_tot", data: "percall_tot", render: $.fn.dataTable.render.number(",", ".", 3)},
-            { title: "cumtime", data: "cumtime", render: $.fn.dataTable.render.number(",", ".", 3)},
-            { title: "percall_cum", data: "percall_cum", render: $.fn.dataTable.render.number(",", ".", 3)},
-            { title: "file_name", data: "file_name" },
-            { title: "location", data: "location" },
+            { title: "cnt", data: "ncalls" },
+            { title: "self", data: "tottime", render: $.fn.dataTable.render.number(",", ".", 3)},
+            { title: "/call", data: "percall_tot", render: $.fn.dataTable.render.number(",", ".", 3)},
+            { title: "all", data: "cumtime", render: $.fn.dataTable.render.number(",", ".", 3)},
+            { title: "/call", data: "percall_cum", render: $.fn.dataTable.render.number(",", ".", 3)},
+            { title: "name", data: "file_name" },
+            { title: "@", data: "location" },
             { title: "path", data: "dir_name" }
         ],
         "scrollY": "400px",
@@ -38,7 +38,7 @@ var TABLE = (function(stats){
 
 })(STATS);
 
-var CHART = (function(element, stats){
+var CHART = (function(element, stats, limit){
     var labels = {};
     var series = {};
     var colors = palette("cb-Pastel2", Object.keys(stats).length);
@@ -51,9 +51,9 @@ var CHART = (function(element, stats){
             }else{
                 var index = s.file_name + " " + s.location;
                 if(!(index in labels)){
-                    labels[index] = s.cumtime;
+                    labels[index] = s.percall_cum;
                 }else{
-                    labels[index] += s.cumtime;
+                    labels[index] += s.percall_cum;
                 }
                 sData[index] = s.percall_cum;
             }
@@ -67,6 +67,7 @@ var CHART = (function(element, stats){
         return second[1] - first[1];
     });
     var sortedLabels = labelsPairs.map(function(kv){ return kv[0];});
+    sortedLabels = sortedLabels.slice(0, limit)
     labels = [];
     var sortedSeries = [];
     var index = 0
@@ -91,7 +92,6 @@ var CHART = (function(element, stats){
         labels: sortedLabels,
         datasets: sortedSeries
     }
-    console.log(data)
     
     var ctx = document.getElementById(element).getContext("2d");
     var chart = new Chart(ctx, {
@@ -99,7 +99,7 @@ var CHART = (function(element, stats){
         data: data,
         options: {
             title:{
-                display:true,
+                display:false,
                 text:"Function's Stacked Percall Cumtime"
             },
             tooltips: {
@@ -120,4 +120,4 @@ var CHART = (function(element, stats){
 
     return chart;
 
-})("statChart", STATS);
+})("statChart", STATS, 30);

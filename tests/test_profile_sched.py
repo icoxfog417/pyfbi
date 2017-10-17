@@ -25,11 +25,7 @@ def func3():
 
 if __name__ == "__main__":
     profile_dir = os.path.join(os.path.dirname(__file__), "profile")
-    if not os.path.isdir(profile_dir):
-        os.mkdir(profile_dir)
-    path = os.path.join(profile_dir, "sched_p")
-
-    sched = Scheduler(5, path)
+    sched = Scheduler(5, stat_dir=profile_dir)
     pyFBI.start(sched)
     for f in [func1, func2, func2, func3, func1, func1]:
         f()

@@ -1,9 +1,11 @@
 import os
 import cProfile
 import pstats
+import inspect
 from datetime import datetime
 from time import perf_counter
 import tempfile
+from functools import update_wrapper, partial
 from tempfile import NamedTemporaryFile
 
 
@@ -53,13 +55,16 @@ class Profiler(object):
 
 class Scheduler(object):
 
-    def __init__(self, seconds, file_path):
+    def __init__(self, seconds, stat_dir, stat_file_name="stat"):
         self.seconds = seconds
-        self.file_path = file_path
+        self.stat_dir = stat_dir
+        self.stat_file_name = stat_file_name
         self.start_time = None
 
     def start(self):
         self.start_time = perf_counter()
+        if not os.path.isdir(self.stat_dir):
+            os.mkdir(self.stat_dir)
 
     def is_timing(self):
         now = perf_counter()
@@ -71,12 +76,12 @@ class Scheduler(object):
 
     def get_path(self):
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        if "." in self.file_path:
-            root, ext = os.path.splitext(self.file_path)
-            path = "{}_{}{}".format(root, timestamp, ext)
+        if "." in self.stat_file_name:
+            name, ext = os.path.splitext(self.stat_file_name)
+            file_name = "{}_{}{}".format(name, timestamp, ext)
         else:
-            path = "{}_{}".format(self.file_path, timestamp)
-        return path
+            file_name = "{}_{}".format(self.stat_file_name, timestamp)
+        return os.path.join(self.stat_dir, file_name)
 
 
 pyFBI = Profiler()
@@ -85,7 +90,15 @@ pyFBI = Profiler()
 class watch(object):
 
     def __init__(self, func):
+        update_wrapper(self, func)
         self.func = func
+
+    def __get__(self, obj, objtype):
+        # Support instance methods.
+        if obj is not None:
+            return partial(self.__call__, obj)
+        else:
+            return self.__call__
 
     def __call__(self, *args, **kwargs):
         profile = None
