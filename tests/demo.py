@@ -1,23 +1,27 @@
 import os
 import sys
+import time
 sys.path.append(os.path.join(os.path.dirname(__file__), "../"))
-from pyfbi.profiler import pyFBI
-from pyfbi.profiler import watch
+import pyfbi
 
 
-@watch
-def func1(a, b):
-    return a + b
+@pyfbi.target
+def func1():
+    time.sleep(1)
 
-def func2(a, b):
-    return a + b
+def func2():
+    time.sleep(2)
 
-@watch
-def func3(a, b):
-    return a + b
+@pyfbi.target
+def func3():
+    time.sleep(3)
 
 
-pyFBI.start()
-[f(1, 2) for f in (func1, func2, func3)]
-pyFBI.stop()
-pyFBI.show()
+with pyfbi.watch():
+    [f() for f in (func1, func2, func3)]
+pyfbi.show()
+
+
+with pyfbi.watch(global_watch=True):
+    [f() for f in (func1, func2, func3)]
+pyfbi.show()

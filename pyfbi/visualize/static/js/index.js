@@ -18,7 +18,7 @@ var TABLE = (function(stats){
             { title: "cnt", data: "ncalls" },
             { title: "self", data: "tottime", render: $.fn.dataTable.render.number(",", ".", 3)},
             { title: "/call", data: "percall_tot", render: $.fn.dataTable.render.number(",", ".", 3)},
-            { title: "all", data: "cumtime", render: $.fn.dataTable.render.number(",", ".", 3)},
+            { title: "total", data: "cumtime", render: $.fn.dataTable.render.number(",", ".", 3)},
             { title: "/call", data: "percall_cum", render: $.fn.dataTable.render.number(",", ".", 3)},
             { title: "name", data: "file_name" },
             { title: "@", data: "location" },
@@ -38,7 +38,7 @@ var TABLE = (function(stats){
 
 })(STATS);
 
-var CHART = (function(element, stats, limit){
+MakeChart = function(element, stats, feature, limit){
     var labels = {};
     var series = {};
     var colors = palette("cb-Pastel2", Object.keys(stats).length);
@@ -51,11 +51,11 @@ var CHART = (function(element, stats, limit){
             }else{
                 var index = s.file_name + " " + s.location;
                 if(!(index in labels)){
-                    labels[index] = s.percall_cum;
+                    labels[index] = s[feature];
                 }else{
-                    labels[index] += s.percall_cum;
+                    labels[index] += s[feature];
                 }
-                sData[index] = s.percall_cum;
+                sData[index] = s[feature];
             }
         }
         series[f] = sData;
@@ -120,4 +120,25 @@ var CHART = (function(element, stats, limit){
 
     return chart;
 
-})("statChart", STATS, 30);
+}
+
+//Vue.config.debug = true;
+var app = new Vue({
+    el: "#controller",
+    delimiters: ["[[", "]]"],
+    data: {
+        chart: null,
+        feature: "tottime"
+    },
+    created: function(){
+        this.render();
+    },
+    methods: {
+        render: function(){
+            if(this.chart != null){
+                this.chart.destroy();
+            }
+            this.chart = MakeChart("statChart", STATS, this.feature, 30);
+        }
+    }
+})

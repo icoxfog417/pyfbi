@@ -3,45 +3,70 @@
 pyFBI enables "as much as needed" profiling by decorator.
 
 ```py
-from pyfbi.profiler import pyFBI
-from pyfbi.profiler import watch
+import time
+import pyfbi
 
 
-@watch
-def func1(a, b):
-    return a + b
+@pyfbi.target
+def func1():
+    time.sleep(1)
 
-def func2(a, b):
-    return a + b
+def func2():
+    time.sleep(2)
 
-@watch
-def func3(a, b):
-    return a + b
+@pyfbi.target
+def func3():
+    time.sleep(3)
 
 
-pyFBI.start()
-[f(1, 2) for f in (func1, func2, func3)]
-pyFBI.stop()
-pyFBI.show()
+with pyfbi.watch():
+    [f() for f in (func1, func2, func3)]
+pyfbi.show()
 ```
 
-Then only "watched" function (`func1` & `func3`) is profiled.
+Then only "target" function (`func1` & `func3`) is profiled.
 
 ```
-         4 function calls in 0.000 seconds
+         6 function calls in 4.003 seconds
 
    Random listing order was used
 
    ncalls  tottime  percall  cumtime  percall filename:lineno(function)
-        1    0.000    0.000    0.000    0.000 tests/demo.py:8(func1)
+        2    4.003    2.002    4.003    2.002 {built-in method time.sleep}
+        1    0.000    0.000    1.003    1.003 tests/demo.py:8(func1)
         2    0.000    0.000    0.000    0.000 {method 'disable' of '_lsprof.Profiler' objects}
-        1    0.000    0.000    0.000    0.000 tests/demo.py:15(func3)
+        1    0.000    0.000    3.000    3.000 tests/demo.py:15(func3)
 ```
 
 You can save the result to the file.
 
 ```
-pyFBI.dump("your_profile_path")
+pyfbi.dump("your_stat_file_path")
+```
+
+If you want to watch the all functions, set `global_watch=True`.
+
+
+```py
+with pyfbi.watch(global_watch=True):
+    [f() for f in (func1, func2, func3)]
+pyfbi.show()
+```
+
+```
+         17 function calls in 6.007 seconds
+
+   Random listing order was used
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+        1    0.000    0.000    0.000    0.000 {built-in method builtins.next}
+        3    6.007    2.002    6.007    2.002 {built-in method time.sleep}
+        1    0.000    0.000    1.004    1.004 tests/demo.py:8(func1)
+        1    0.000    0.000    2.002    2.002 tests/demo.py:12(func2)
+        1    0.000    0.000    3.000    3.000 tests/demo.py:15(func3)
+        1    0.000    0.000    6.007    6.007 tests/demo.py:26(<listcomp>)
+   ...
+
 ```
 
 ## Installation
@@ -57,17 +82,15 @@ pip install pyfbi
 The following script store the stat for each 5 seconds.
 
 ```py
-from pyfbi.profiler import pyFBI, Scheduler
-from pyfbi.profiler import watch
+import pyfbi
 
-(set watch to your function)
+(set target to your function)
 
-profile_dir = os.path.join(os.path.dirname(__file__), "profile")
-sched = Scheduler(5, stat_dir=profile_dir)  # make scheduler
-pyFBI.start(sched)
-for f in [func1, func2, func2, func3, func1, func1]:
-    f()
-pyFBI.stop()
+stat_dir = os.path.join(os.path.dirname(__file__), "stats")
+# You can use global_watch=True if you want to profile all functions.
+with pyfbi.watch_periodic(seconds=5, stat_dir=stat_dir):
+    for f in [func1, func2, func2, func3, func1, func1]:
+        f()
 ```
 
 ### Visualization

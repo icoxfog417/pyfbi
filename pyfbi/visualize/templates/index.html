@@ -25,7 +25,26 @@
 {% block body %}
 
 <div class="area">
-    <div>
+    <div id="controller">
+        <div class="control">
+            <label class="radio">
+                <input type="radio" value="ncalls" v-on:change="render" v-model="feature">count
+            </label>
+            <label class="radio">
+                <input type="radio" value="tottime" v-on:change="render" v-model="feature">self
+            </label>
+            <label class="radio">
+                <input type="radio" value="percall_tot" v-on:change="render" v-model="feature">self/call
+            </label>
+            <label class="radio">
+                <input type="radio" value="cumtime" v-on:change="render" v-model="feature">total
+            </label>
+            <label class="radio">
+                <input type="radio" value="percall_cum" v-on:change="render" v-model="feature">all/call
+            </label>
+        </div>
+    </div>
+    <div class="container">
         <canvas id="statChart"></canvas>
     </div>
     <div>
@@ -34,7 +53,7 @@
         <ul>
             <li>cnt: called count</li>
             <li>self: execution time (exclude inner called function)</li>
-            <li>all: total execution time (include called function)</li>
+            <li>total: total execution time (include called function)</li>
             <li>/call: divided by called count</li>
         </ul>
     </div>

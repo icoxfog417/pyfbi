@@ -3,17 +3,16 @@ import sys
 import time
 import pstats
 sys.path.append(os.path.join(os.path.dirname(__file__), "../"))
-from pyfbi.profiler import pyFBI
-from pyfbi.profiler import watch
+import pyfbi
 
 
-@watch
+@pyfbi.target
 def func(a, b):
     time.sleep(1)
     return a + b
 
 
-@watch
+@pyfbi.target
 def func2(a, b):
     time.sleep(2)
     return a + b
@@ -21,7 +20,7 @@ def func2(a, b):
 
 class SampleClass():
 
-    @watch
+    @pyfbi.target
     def show(self, seconds):
         time.sleep(seconds)
         return None
@@ -30,21 +29,19 @@ class SampleClass():
 if __name__ == "__main__":
     print("Profile to stream  *******************")
     s = SampleClass()
-    pyFBI.start()
-    func(1, 2)
-    s.show(1)
-    pyFBI.stop()
+    with pyfbi.watch():
+        func(1, 2)
+        s.show(1)
     func(1, 2)  # not recorded
-    pyFBI.show()
+    pyfbi.show()
 
     print("Profile to File **********************")
     path = os.path.join(os.path.dirname(__file__), "profile_result")
-    pyFBI.start()
-    func(2, 3)
-    func(1, 2)
-    func2(1, 2)
-    pyFBI.stop()
-    pyFBI.dump(path)
+    with pyfbi.watch():
+        func(2, 3)
+        func(1, 2)
+        func2(1, 2)
+    pyfbi.dump(path)
     stats = pstats.Stats(path)
     stats.print_stats()
     os.remove(path)
