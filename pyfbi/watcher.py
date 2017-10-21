@@ -67,7 +67,7 @@ class Watcher(object):
     def show(self):
         if self.stats is not None:
             self.stats.print_stats()
-    
+
     def dump(self, file_path):
         if self.stats is not None:
             self.stats.dump_stats(file_path)

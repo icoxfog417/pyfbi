@@ -2,7 +2,7 @@ import os
 import pstats
 
 
-class FBIStat():
+class FBIStat(object):
 
     def __init__(
         self,

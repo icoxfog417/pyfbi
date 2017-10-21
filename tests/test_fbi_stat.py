@@ -4,17 +4,16 @@ import sys
 import shutil
 import time
 sys.path.append(os.path.join(os.path.dirname(__file__), "../"))
-from pyfbi.profiler import pyFBI
-from pyfbi.profiler import watch
+import pyfbi
 from pyfbi.fbi_stat import FBIStat
 
 
-@watch
+@pyfbi.target
 def func1():
     time.sleep(1)
 
 
-@watch
+@pyfbi.target
 def func2():
     time.sleep(1)
 
@@ -26,11 +25,10 @@ class TestOneStat(unittest.TestCase):
     def setUpClass(cls):
         if not os.path.isdir(cls.PATH):
             os.mkdir(cls.PATH)
-        pyFBI.start()
-        for f in [func1, func2, func2, func1, func2]:
-            f()
-        pyFBI.stop()
-        pyFBI.dump(cls.get_path())
+        with pyfbi.watch():
+            for f in [func1, func2, func2, func1, func2]:
+                f()
+        pyfbi.dump(cls.get_path())
 
     @classmethod
     def tearDownClass(cls):
