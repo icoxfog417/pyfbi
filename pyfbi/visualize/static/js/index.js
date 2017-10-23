@@ -16,7 +16,7 @@ var TABLE = (function(stats){
         data: dataSet,
         columns: [
             { title: "cnt", data: "ncalls" },
-            { title: "self", data: "tottime", render: $.fn.dataTable.render.number(",", ".", 3)},
+            { title: "pure", data: "tottime", render: $.fn.dataTable.render.number(",", ".", 3)},
             { title: "/call", data: "percall_tot", render: $.fn.dataTable.render.number(",", ".", 3)},
             { title: "total", data: "cumtime", render: $.fn.dataTable.render.number(",", ".", 3)},
             { title: "/call", data: "percall_cum", render: $.fn.dataTable.render.number(",", ".", 3)},
@@ -37,8 +37,12 @@ var TABLE = (function(stats){
     return table;
 
 })(STATS);
+TABLE.on("search.dt", function(){
+    app.render(TABLE.search());
+} );
 
-MakeChart = function(element, stats, feature, limit){
+
+MakeChart = function(element, stats, feature, limit, filterText){
     var labels = {};
     var series = {};
     var colors = palette("cb-Pastel2", Object.keys(stats).length);
@@ -47,6 +51,8 @@ MakeChart = function(element, stats, feature, limit){
         for(var i = 0; i < stats[f].length; i++){
             var s = stats[f][i];
             if(s.is_builtin){
+                continue;
+            }else if(filterText != "" && filterText != null && s.key.indexOf(filterText) < 0){
                 continue;
             }else{
                 var index = s.file_name + " " + s.location;
@@ -128,17 +134,26 @@ var app = new Vue({
     delimiters: ["[[", "]]"],
     data: {
         chart: null,
-        feature: "tottime"
+        feature: "tottime",
+        _filterText: null
     },
     created: function(){
         this.render();
     },
     methods: {
-        render: function(){
+        render: function(filter){
+            var f = filter !== undefined ? filter : "";
+            if(f != "" && f == this._filterText){
+                return 0
+            }else{
+                this._filterText = filter
+            }
             if(this.chart != null){
                 this.chart.destroy();
             }
-            this.chart = MakeChart("statChart", STATS, this.feature, 30);
+            this.chart = MakeChart(
+                "statChart", STATS, this.feature, 30, this._filterText
+            );
         }
     }
 })

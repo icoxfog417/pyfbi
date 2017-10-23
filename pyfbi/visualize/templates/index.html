@@ -25,37 +25,31 @@
 {% block body %}
 
 <div class="area">
-    <div id="controller">
+    <div>
+        <table id="stat_table" class="display" width="100%"></table>
+    </div>
+    <br/>
+    <div id="controller" class="field is-grouped">
         <div class="control">
             <label class="radio">
-                <input type="radio" value="ncalls" v-on:change="render" v-model="feature">count
+                <input type="radio" value="ncalls" v-on:change="render()" v-model="feature">count
             </label>
             <label class="radio">
-                <input type="radio" value="tottime" v-on:change="render" v-model="feature">self
+                <input type="radio" value="tottime" v-on:change="render()" v-model="feature">pure
             </label>
             <label class="radio">
-                <input type="radio" value="percall_tot" v-on:change="render" v-model="feature">self/call
+                <input type="radio" value="percall_tot" v-on:change="render()" v-model="feature">pure/call
             </label>
             <label class="radio">
-                <input type="radio" value="cumtime" v-on:change="render" v-model="feature">total
+                <input type="radio" value="cumtime" v-on:change="render()" v-model="feature">total
             </label>
             <label class="radio">
-                <input type="radio" value="percall_cum" v-on:change="render" v-model="feature">all/call
+                <input type="radio" value="percall_cum" v-on:change="render()" v-model="feature">total/call
             </label>
         </div>
     </div>
     <div class="container">
         <canvas id="statChart"></canvas>
-    </div>
-    <div>
-        <table id="stat_table" class="display" width="100%"></table>
-        <br/>
-        <ul>
-            <li>cnt: called count</li>
-            <li>self: execution time (exclude inner called function)</li>
-            <li>total: total execution time (include called function)</li>
-            <li>/call: divided by called count</li>
-        </ul>
     </div>
     <br/>
 </div>
