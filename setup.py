@@ -23,7 +23,7 @@ def get_statics(folders):
 
 setup(
     name="pyfbi",
-    version="0.2.1",
+    version="0.2.2",
     description="pyFBI enables 'as much as needed' profiling by decorator",
     url="https://github.com/icoxfog417/pyfbi",
     author="icoxfog417",
